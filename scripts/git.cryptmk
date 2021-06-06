@@ -1,0 +1,13 @@
+NAME=${1%/}
+
+mkdir -p ~/svn_crypt
+cd ~/svn_crypt
+
+fusermount -u ${NAME}_plain
+rm ${NAME}_cipher ${NAME}_plain -rf
+
+mkdir ${NAME}_cipher
+gocryptfs -init ${NAME}_cipher
+
+mkdir ${NAME}_plain
+gocryptfs ${NAME}_cipher ${NAME}_plain

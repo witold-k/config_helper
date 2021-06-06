@@ -1,0 +1,13 @@
+MODULE=$1
+DIR=$(pwd)
+cd $MODULE
+URL=$(git remote get-url origin)
+cd $DIR
+
+echo "URL=$URL"
+
+git submodule deinit -f $MODULE
+git rm -f $MODULE
+rm -rf .git/modules/$MODULE
+
+git submodule add $URL $MODULE

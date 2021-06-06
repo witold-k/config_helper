@@ -1,0 +1,34 @@
+LOCDIR=${2%/}
+SERVERDIR=/media/usb1/svn/development-repos/$1
+SERVER=svnuser@naspi
+
+SUBMODULEDIR=${LOCDIR}_submodule
+
+ssh $SERVER "cd $SERVERDIR && mkdir ${LOCDIR}.git && cd ${LOCDIR}.git && git init --bare"
+
+git clone ssh://$SERVER/$SERVERDIR/${LOCDIR}.git ${SUBMODULEDIR}
+cp -r ${LOCDIR}/* ${SUBMODULEDIR}
+cd ${SUBMODULEDIR}
+git add -A
+git commit -m "initial commit"
+git push
+#git checkout -B dev
+#git push --set-upstream origin dev
+cd ..
+
+cd $SUBMODULEDIR
+GITSTATUS=$(git status)
+cd ..
+GITDIFF=$(git diff $LOCDIR $SUBMODULEDIR)
+
+echo "git status: " $GITSTATUS
+echo "git diff: " $GITDIFF
+
+#if git status &&
+    git rm -rf ${LOCDIR}
+    rm -rf ${LOCDIR}
+    rm -rf $SUBMODULEDIR
+    git submodule add $SERVER:$SERVERDIR/${LOCDIR}.git
+    git commit -m "convert ${LOCDIR} to submodule"
+    git push
+#fi

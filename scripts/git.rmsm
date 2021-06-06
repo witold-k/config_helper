@@ -1,0 +1,5 @@
+MODULE=$1
+git submodule deinit -f $MODULE
+git rm -f $MODULE
+git commit -m "removed submodule: $MODULE"
+rm -rf .git/modules/$MODULE

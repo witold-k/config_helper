@@ -1,0 +1,1 @@
+ed $(find . -iname $1 | fzy)

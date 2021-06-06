@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ ! -d ~/svn/work ]; then
+    mkdir ~/svn/work
+fi
+
+
+build=~/svn/work/build.log
+err="~/svn/work/err.$$"
+
+# mkdir -p ~/svn/ 2> /dev/null
+mkfifo "$err"
+#trap 'rm "$err"' EXIT
+
+tee < $$build "$err" >&2 &
+jam compile $@ 2> $build
+
+if [ -s $build ];
+then
+    cat $build | fzy -x $HOME/bin/ed
+fi

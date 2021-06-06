@@ -1,0 +1,8 @@
+BRANCH=dev
+ORIGIN=dev-$HOSTNAME-$USER
+
+git checkout master
+git branch -d $BRANCH
+git push origin --delete $ORIGIN
+git checkout -b $BRANCH
+git push -u origin $BRANCH:$ORIGIN

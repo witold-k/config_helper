@@ -1,0 +1,18 @@
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+ORIGIN=$(git rev-parse --abbrev-ref --symbolic-full-name @{u})
+
+if [ "$BRANCH" == "master" ]; then
+    echo "branch is: master => exit"
+    exit
+fi
+if [ "ORIGIN" == "origin/master" ]; then
+    echo "origin is: origin/master => exit"
+    exit
+fi
+
+git reset --merge
+git checkout master
+git branch -d $BRANCH
+git push origin --delete $BRANCH
+git checkout -b $BRANCH
+git push --set-upstream origin $BRANCH

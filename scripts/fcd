@@ -1,0 +1,6 @@
+if [ -z $1 ]
+then
+    cd $(find -type d | fzy)
+else
+    cd $(find -type d -name $1 | fzy)
+fi

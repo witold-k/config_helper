@@ -1,0 +1,11 @@
+#!/bin/sh
+
+currentdir=$(pwd)
+makesuffx="_make"
+makedir=${currentdir}${makesuffx}
+echo "makedir=" $makedir
+rm -rf $makedir 2> /dev/null
+mkdir $makedir 2> /dev/null
+cd $makedir
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 $@  $currentdir
+cd $currentdir

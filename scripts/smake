@@ -1,0 +1,12 @@
+#!/bin/sh
+
+currentdir=$(pwd)
+makesuffix="_make"
+makedir=${currentdir}${makesuffix}
+
+if [ -e "Makefile" ]
+then
+  $make_bin "$@"
+else
+  $make_bin "$@" -s -C $makedir
+fi

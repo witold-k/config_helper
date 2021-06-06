@@ -1,0 +1,61 @@
+#!/bin/bash
+
+REMOTE=$(git remote get-url origin)
+echo $REMOTE
+
+# Following regex is based on https://tools.ietf.org/html/rfc3986#appendix-B with
+# additional sub-expressions to split authority into userinfo, host and port
+#
+readonly URI_REGEX='^(([^:/?#]+):)?(//((([^:/?#]+)@)?([^:/?#]+)(:([0-9]+))?))?(/([^?#]*))(\?([^#]*))?(#(.*))?'
+#                    ↑↑            ↑  ↑↑↑            ↑         ↑ ↑            ↑ ↑        ↑  ↑        ↑ ↑
+#                    |2 scheme     |  ||6 userinfo   7 host    | 9 port       | 11 rpath |  13 query | 15 fragment
+#                    1 scheme:     |  |5 userinfo@             8 :…           10 path    12 ?…       14 #…
+#                                  |  4 authority
+#                                  3 //…
+
+parse_user () {
+    [[ "$@" =~ $URI_REGEX ]] && echo "${BASH_REMATCH[6]}"
+}
+
+parse_host () {
+    [[ "$@" =~ $URI_REGEX ]] && echo "${BASH_REMATCH[7]}"
+}
+
+parse_port () {
+    [[ "$@" =~ $URI_REGEX ]] && echo "${BASH_REMATCH[9]}"
+}
+
+parse_path () {
+    [[ "$@" =~ $URI_REGEX ]] && echo "${BASH_REMATCH[10]}"
+}
+
+PORT=$(parse_port "$REMOTE")
+if [ -z "$PORT" ]
+then
+    SERVER=$(parse_user "$REMOTE")@$(parse_host "$REMOTE")
+else
+    SERVER=$(parse_user "$REMOTE")@$(parse_host "$REMOTE"):$(parse_port "$REMOTE")
+
+fi
+SERVERDIR=$(parse_path "$REMOTE")
+
+# ----
+
+MODULES=$(git config --file .gitmodules --get-regexp path | awk '{ print $2 }')
+for MODULE in $MODULES
+do
+    git submodule deinit $MODULE
+    git rm $MODULE
+    git commit -m "removed submodule: $MODULE"
+    rm -rf .git/modules/$MODULE
+done
+
+ssh $SERVER "mv ${SERVERDIR} ${SERVERDIR}_backup && mkdir ${SERVERDIR} && cd ${SERVERDIR} && git init --bare"
+rm -rf .git*
+
+git init
+git remote add origin $REMOTE
+git fetch
+git add -A
+git commit -m "initial commit"
+git push --set-upstream origin master
