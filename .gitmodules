@@ -13,9 +13,6 @@
 [submodule "emacs/xclip"]
 	path = emacs/xclip
 	url = https://github.com/emacsmirror/xclip.git
-[submodule "emacs/s.sl"]
-	path = emacs/s.sl
-	url = https://github.com/magnars/s.el.git
 [submodule "emacs/s.el"]
 	path = emacs/s.el
 	url = https://github.com/magnars/s.el.git
