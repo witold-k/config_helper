@@ -16,3 +16,9 @@
 [submodule "emacs/s.el"]
 	path = emacs/s.el
 	url = https://github.com/magnars/s.el.git
+[submodule "emacs/openwith"]
+	path = emacs/openwith
+	url = https://github.com/emacsmirror/openwith.git
+[submodule "emacs/multiple-cursors.el"]
+	path = emacs/multiple-cursors.el
+	url = https://github.com/magnars/multiple-cursors.el.git
