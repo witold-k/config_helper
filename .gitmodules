@@ -22,3 +22,9 @@
 [submodule "emacs/multiple-cursors.el"]
 	path = emacs/multiple-cursors.el
 	url = https://github.com/magnars/multiple-cursors.el.git
+[submodule "emacs/dash.el"]
+	path = emacs/dash.el
+	url = https://github.com/magnars/dash.el.git
+[submodule "emacs/highlight-symbol.el"]
+	path = emacs/highlight-symbol.el
+	url = https://github.com/nschum/highlight-symbol.el.git
