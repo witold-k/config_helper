@@ -1,0 +1,21 @@
+[submodule "emacs/ace-jump-mode"]
+	path = emacs/ace-jump-mode
+	url = https://github.com/winterTTr/ace-jump-mode.git
+[submodule "emacs/company-mode"]
+	path = emacs/company-mode
+	url = https://github.com/company-mode/company-mode.git
+[submodule "emacs/emacs-neotree"]
+	path = emacs/emacs-neotree
+	url = https://github.com/jaypei/emacs-neotree.git
+[submodule "emacs/powerline"]
+	path = emacs/powerline
+	url = https://github.com/milkypostman/powerline.git
+[submodule "emacs/xclip"]
+	path = emacs/xclip
+	url = https://github.com/emacsmirror/xclip.git
+[submodule "emacs/s.sl"]
+	path = emacs/s.sl
+	url = https://github.com/magnars/s.el.git
+[submodule "emacs/s.el"]
+	path = emacs/s.el
+	url = https://github.com/magnars/s.el.git
