@@ -1,0 +1,106 @@
+diff --git a/neotree.el b/neotree.el
+index 0156cb9..314d719 100644
+--- a/neotree.el
++++ b/neotree.el
+@@ -381,7 +381,7 @@ This variable is used in `neo-vc-for-node' when
+   :type 'boolean
+   :group 'neotree)
+ 
+-(defcustom neo-force-change-root t
++(defcustom neo-force-change-root nil
+   "If not nil, do not prompt when switching root."
+   :type 'boolean
+   :group 'neotree)
+@@ -656,6 +656,7 @@ The car of the pair will store fullpath, and cdr will store line number.")
+     (define-key map (kbd "C-c C-c") 'neotree-change-root)
+     (define-key map (kbd "C-c c")   'neotree-dir)
+     (define-key map (kbd "C-c C-a")  'neotree-collapse-all)
++    (define-key map (kbd "C-c e")   'neotree-edit-bookmarks)
+     (cond
+      ((eq neo-keymap-style 'default)
+       (define-key map (kbd "C-c C-n") 'neotree-create-node)
+@@ -1364,22 +1365,53 @@ PATH is value."
+       (set-text-properties start (point) '(face neo-banner-face)))
+     (neo-buffer--newline-and-begin)))
+ 
+-(defun neo-buffer--insert-root-entry (node)
+-  (neo-buffer--node-list-set nil node)
+-  (cond ((eq neo-cwd-line-style 'button)
+-         (neo-path--insert-header-buttonized node))
+-        (t
+-         (neo-buffer--insert-with-face (neo-path--shorten node (window-body-width))
+-                                       'neo-root-dir-face)))
++(defun neotree-edit-bookmarks ()
++  (interactive)
++  (neo-open-file "~/.emacs.d/neotree-bookmarks.el"))
++
++(defun neo-buffer--open-bookmarks (file-or-dir-list)
++  (message "select bookmark %s" (nth 0 file-or-dir-list))
++  (if (file-directory-p (nth 0 file-or-dir-list))
++      (neotree-change-root)
++      (dolist (file file-or-dir-list) (neo-open-file file))))
++
++(defun neo-buffer--insert-bookmarks ()
++  (setq neo-buffer--bookmark-file (file-truename "~/.emacs.d/neotree-bookmarks.el"))
++  (if (file-readable-p neo-buffer--bookmark-file)
++      (load (file-truename "~/.emacs.d/neotree-bookmarks.el")))
++  (dolist (element neotree-bookmarks)
++    (setq entry (nth 1 element))
++    (insert-button (nth 0 entry) ;; name
++                   'action '(lambda (button) (neo-buffer--open-bookmarks (button-get button 'neo-file-list)))
++                   'follow-link t
++                   'face neo-file-link-face
++                   'neo-file-list (cdr entry)
++                   'neo-full-path (nth 1 entry))
++    (neo-buffer--newline-and-begin)
++  )
+   (neo-buffer--newline-and-begin)
++)
++
++(defun neo-buffer--insert-root-entry (node)
+   (when neo-show-updir-line
+-    (neo-buffer--insert-fold-symbol 'close node)
++    (neo-buffer--insert-bookmarks)
+     (insert-button ".."
+                    'action '(lambda (x) (neotree-change-root))
+                    'follow-link t
+                    'face neo-dir-link-face
+                    'neo-full-path (neo-path--updir node))
+-    (neo-buffer--newline-and-begin)))
++    (let ((start (point)))
++      (insert " (up a dir)")
++      (set-text-properties start (point) '(face neo-header-face)))
++    (neo-buffer--newline-and-begin))
++  (neo-buffer--node-list-set nil node)
++  (cond
++   ((eq neo-cwd-line-style 'button)
++    (neo-path--insert-header-buttonized node))
++   (t
++    (neo-buffer--insert-with-face (neo-path--shorten node (window-body-width))
++                                  'neo-root-dir-face)))
++  (neo-buffer--newline-and-begin))
+ 
+ (defun neo-buffer--help-echo-message (node-name)
+   (cond
+@@ -1837,14 +1869,14 @@ The children of PATH will have state STATE."
+       (neo-buffer--set-expand node state)
+       (neo--expand-recursive node state ))))
+ 
+-(defun neo-open-dir-recursive (full-path &optional arg)  
++(defun neo-open-dir-recursive (full-path &optional arg)
+   "Toggle fold a directory node recursively.
+ 
+ The children of the node will also be opened recursively.
+ FULL-PATH is the path of the directory.
+ ARG is ignored."
+   (if neo-click-changes-root
+-      (neotree-change-root)    
++      (neotree-change-root)
+     (let ((new-state (neo-buffer--toggle-expand full-path))
+           (children (car (neo-buffer--get-nodes full-path))))
+       (dolist (node children)
+@@ -2223,4 +2255,3 @@ which is used to fix issue #209.
+ 
+ (provide 'neotree)
+ ;;; neotree.el ends here
+-
