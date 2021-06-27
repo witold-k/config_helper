@@ -4,27 +4,34 @@
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 ;; (toggle-debug-on-quit)
+
+;; for command line installation of modules
+;; emacs -e "(progn (package-initialize)(package-install 'packagename))"
+;;
+;; also see https://github.com/cask/cask
+
 (package-initialize)
 
 (add-to-list 'default-frame-alist '(width . 160))
 (add-to-list 'default-frame-alist '(height . 50))
 
+;;
 ;; no not split
+;;
 (setq split-height-threshold nil)
 (setq split-width-threshold nil)
 (setq ring-bell-function 'ignore)
 
+;;
 ;; Plugins
+;;
 (add-to-list 'load-path "~/.emacs.d/ace-jump-mode")
 (add-to-list 'load-path "~/.emacs.d/dash.el")
 (add-to-list 'load-path "~/.emacs.d/emacs-neotree")
-(add-to-list 'load-path "~/.emacs.d/folding.el")
 (add-to-list 'load-path "~/.emacs.d/highlight-symbol.el")
 (add-to-list 'load-path "~/.emacs.d/openwith")
 (add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
 (add-to-list 'load-path "~/.emacs.d/powerline")
-(add-to-list 'load-path "~/.emacs.d/s.el")
-(add-to-list 'load-path "~/.emacs.d/xclip")
 (add-to-list 'custom-theme-load-path (concat "/usr/local/share/emacs/" (emacs-version) "/etc/themes/"))
 
 
@@ -33,40 +40,20 @@
 (require 'openwith)
 (require 'powerline)
 (require 'whitespace)
-(require 'xclip)
 
 
+;;
 ;; set cua mode: ctrl+c, ctrl+v, ctrl+x, ctrl+z
 ;;
 (cua-mode t)
-(setq x-select-enable-primary t)
 
-;; Folding
-;;
-;;  C-c @ C-M-s show all
-;;  C-c @ C-M-h hide all
-;;  C-c @ C-s show block
-;;  C-c @ C-h hide block
-;;  C-c @ C-c toggle hide/show
-;;  M-x hs-*
-;;
-(load "folding" 'nomessage 'noerror)
-(folding-mode-add-find-file-hook)
-(defvar hs-special-modes-alist
-  (mapcar 'purecopy
-  '((c-mode "// {{{" "// }}}" "/[*/]" nil nil)
-    (c++-mode "// {{{" "// }}}" "/[*/]" nil nil)
-    (bibtex-mode ("@\\S(*\\(\\s(\\)" 1))
-    (java-mode "// {{{" "// }}}" "/[*/]" nil nil)
-    (js-mode "{" "}" "/[*/]" nil))))
-
-(folding-add-to-marks-list 'c-mode  "// {{{"  "// }}}"  nil t)
-(folding-add-to-marks-list 'c++-mode  "// {{{"  "// }}}"  nil t)
 
 (add-hook 'prog-mode-hook #'hs-minor-mode) ;; auto enable
 
 
+;;
 ;; openwith
+;;
 (openwith-mode t)
 (setq openwith-associations (list
                              (list (openwith-make-extension-regexp
@@ -84,14 +71,18 @@
 ))
 
 
+;;
 ;; highlight-symbol
+;;
 (global-set-key [(control f3)] 'highlight-symbol)
 (global-set-key [f3] 'highlight-symbol-next)
 (global-set-key [(shift f3)] 'highlight-symbol-prev)
 (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
 
 
+;;
 ;; whitespace settings
+;;
 (setq-default indent-tabs-mode nil) ;;Use spaces instead of tabs
 (setq-default tab-width 4)
 ;;(setq-default tab-always-indent t)
@@ -99,10 +90,13 @@
 (setq indent-line-function 'insert-tab)
 (setq tab-stop-list (number-sequence 4 200 4))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(setq whitespace-style
+      '(empty lines-tail tabs tab-mark trailing))
 
-
+;;
 ;; ibuffer columns
 ;; nearly all of this is the default layout
+;;
 (setq ibuffer-formats
       '((mark modified read-only " "
               (name 30 30 :left :elide) ; change: 30s were originally 18s
@@ -125,14 +119,17 @@
   "Emacs quick move minor mode"
   t)
 ;; you can select the key you prefer to
-(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+(define-key global-map (kbd "C-j") 'ace-jump-mode)
 
 
-
+;;
 ;; powerline
+;;
 (powerline-default-theme)
 
+;;
 ;; The following is set via custom
+;;
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -141,14 +138,16 @@
  '(confirm-kill-processes nil)
  '(custom-enabled-themes '(tsdh-dark))
  '(global-whitespace-mode nil)
- '(package-selected-packages '(xclip))
  '(safe-local-variable-values '((secret-ftp-password . "secret")))
  '(tool-bar-mode nil)
  '(tooltip-mode nil)
  '(vc-follow-symlinks 'ask)
  '(xterm-mouse-mode t))
 
+
+;;
 ;; other settings
+;;
 (setq backup-inhibited t)
 (setq auto-save-default nil)
 (setq make-backup-files nil)
@@ -156,8 +155,6 @@
 (show-paren-mode 1)
 (delete-selection-mode 1)
 (setq confirm-kill-processes nil)
-(setq xterm-mouse-mode 1)
-(setq x-select-enable-clipboard t)
 (global-set-key [(control x) (k)]  'kill-this-buffer)
 (global-set-key (kbd "<select>")   'move-end-of-line) ; end key
 (global-set-key (kbd "ESC <up>")   'beginning-of-buffer)
@@ -182,7 +179,9 @@
     )
 
 
+;;
 ;; key bindings
+;;
 (global-set-key [f4] (lambda() (interactive)
                        (setq command (concat "tmux send-keys -t 1 'cd " (neo-buffer--get-filename-current-line) "' Enter"))
                        (shell-command command)
@@ -201,13 +200,10 @@
 (global-set-key "\C-cb" 'org-iswitchb)
 
 
+;;
 ;; ediff
+;;
 (setq ediff-split-window-function 'split-window-horizontally)
-
-
-;; xclip
-(xclip-mode 1)
-
 
 
 (custom-set-faces
@@ -219,11 +215,9 @@
  '(whitespace-newline ((t (:foreground "darkgray" :weight normal)))))
 
 
-(setq whitespace-style
-  '(empty lines-tail tabs tab-mark trailing))
-
-
+;;
 ;; mouse scroll
+;;
 (require 'mouse)
 (defun scroll-up-10-lines ()
   "Scroll up 10 lines"
@@ -239,7 +233,9 @@
 (global-set-key (kbd "<mouse-5>") 'scroll-up-10-lines) ;
 
 
+;;
 ;; tab indent
+;;
 (defun shift-region (distance)
   (let ((mark (mark)))
     (save-excursion
@@ -262,7 +258,9 @@
 (global-set-key (kbd "<tab>") 'shift-right)
 
 
+;;
 ;; exit emacs
+;;
 (defun my-save-buffers-kill-emacs (&optional arg)
   "Offer to save each buffer, then kill this Emacs process.
 With prefix ARG, silently save all file-visiting buffers without asking.
@@ -316,6 +314,35 @@ if any returns nil.  If `confirm-kill-emacs' is non-nil, calls it."
       (set-buffer-file-coding-system 'unix 't) )
 
 
-;; (server-start) ;; finally start the server to emacsclient
+
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+
+
+;;
+;; tmux integration
+;;
+(defun tmux-set-text (data)
+    (let* (
+            (process-connection-type nil)
+            (proc (start-process "tmux" nil "tmux" "set-buffer" data))
+        )
+        (when proc
+        (process-send-string proc data)
+        (process-send-eof proc)
+    ))
+)
+
+(defun tmux-get-text ()
+    (call-process "tmux" nil standard-output nil "paste")
+)
+
+(setq interprogram-cut-function 'tmux-set-text)
+;;(setq interprogram-paste-function 'tmux-get-text)
+
+
+;;
+;; start server if necessary
+;;
+(load "server")
+(unless (server-running-p) (server-start))
