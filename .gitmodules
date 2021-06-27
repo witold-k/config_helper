@@ -10,12 +10,6 @@
 [submodule "emacs/powerline"]
 	path = emacs/powerline
 	url = https://github.com/milkypostman/powerline.git
-[submodule "emacs/xclip"]
-	path = emacs/xclip
-	url = https://github.com/emacsmirror/xclip.git
-[submodule "emacs/s.el"]
-	path = emacs/s.el
-	url = https://github.com/magnars/s.el.git
 [submodule "emacs/openwith"]
 	path = emacs/openwith
 	url = https://github.com/emacsmirror/openwith.git
