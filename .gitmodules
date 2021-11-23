@@ -22,3 +22,12 @@
 [submodule "emacs/highlight-symbol.el"]
 	path = emacs/highlight-symbol.el
 	url = https://github.com/nschum/highlight-symbol.el.git
+[submodule "kakoune/kakoune-buffers"]
+	path = kakoune/kakoune-buffers
+	url = https://github.com/Delapouite/kakoune-buffers.git
+[submodule "kakoune/kaktree"]
+	path = kakoune/kaktree
+	url = https://github.com/andreyorst/kaktree.git
+[submodule "kakoune/powerline.kak"]
+	path = kakoune/powerline.kak
+	url = https://github.com/andreyorst/powerline.kak.git
