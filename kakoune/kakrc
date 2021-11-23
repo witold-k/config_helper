@@ -1,0 +1,37 @@
+# edit this file:
+# echo 'eval -client client0 %{ edit ~/.config/kak/kakrc  }' | kak -p ide
+
+map global normal <F9> ': buffer-next<ret>'
+map global normal <S-F9> ': buffer-previous<ret>'
+
+# Width of a tab
+set-option global tabstop 4
+
+# Indent with 4 spaces
+set-option global indentwidth 4
+
+# Always keep one line and three columns displayed around the cursor
+set-option global scrolloff 1,3
+
+# Display line numbers
+# add-highlighter global/numbers number-lines -hlcursor
+
+# Softwrap long lines
+add-highlighter global/ wrap -word -indent
+
+hook global WinCreate .* %{
+    add-highlighter buffer/numbers number-lines -hlcursor
+} 
+
+hook global WinSetOption filetype=kaktree %{
+    remove-highlighter buffer/numbers
+    remove-highlighter buffer/matching
+    remove-highlighter buffer/wrap
+    remove-highlighter buffer/show-whitespaces
+} 
+
+kaktree-enable
+powerline-start
+
+map global insert <F8> ': kaktree-toggle<ret>'
+map global normal <F8> ': kaktree-toggle<ret>'
